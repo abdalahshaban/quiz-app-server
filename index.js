@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 mongoose.Promise = global.Promise;
 
 mongoose.connect(
-    dbConfig.URL_LOCAL,
+    dbConfig.URL,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
