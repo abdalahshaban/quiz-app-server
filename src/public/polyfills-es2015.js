@@ -6364,7 +6364,7 @@ window.global = window;
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /*!***************************************************************************************************************************!*\
   !*** multi ./src/polyfills.ts ./node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/jit-polyfills.js ***!
   \***************************************************************************************************************************/
@@ -6377,5 +6377,5 @@ module.exports = __webpack_require__(/*! E:\testForMe\tasks\QuizApp\quiz-app-cli
 
 /***/ })
 
-},[[3,"runtime"]]]);
+},[[2,"runtime"]]]);
 //# sourceMappingURL=polyfills-es2015.js.map

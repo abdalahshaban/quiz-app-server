@@ -802,9 +802,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
 /* harmony import */ var _services_authservice_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../services/authservice.service */ "./src/app/auth/services/authservice.service.ts");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
-/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_6__);
-
 
 
 
@@ -818,7 +815,6 @@ let SignupComponent = class SignupComponent {
         this.router = router;
         this.tokenService = tokenService;
         this.showSpinner = false;
-        this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_6___default()('http://localhost:3000');
     }
     ngOnInit() {
         this.init();
@@ -835,7 +831,6 @@ let SignupComponent = class SignupComponent {
         this.authoService.registerUser(this.signupForm.value).subscribe(data => {
             // console.log(data);
             this.tokenService.SetToken(data['token']);
-            this.socket.emit('refresh', {});
             // console.log(data)
             this.signupForm.reset();
             setTimeout(() => {
@@ -1152,9 +1147,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_teacher_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../services/teacher.service */ "./src/app/teacher/services/teacher.service.ts");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
-/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_5__);
-
 
 
 
@@ -1168,13 +1160,9 @@ let AllQuizeComponent = class AllQuizeComponent {
         this.tokenServ = tokenServ;
         this.displayedColumns = ['id', 'action'];
         this.dataSource = [];
-        this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_5___default()('http://localhost:3000');
     }
     ngOnInit() {
         this.getAllQuiz();
-        this.socket.on('refreshPage', () => {
-            this.getAllQuiz();
-        });
     }
     getAllQuiz() {
         this.teacherSer.getQuiz().subscribe(data => {
@@ -1204,7 +1192,7 @@ let AllQuizeComponent = class AllQuizeComponent {
     }
     publish(id) {
         this.teacherSer.publishQuiz(id).subscribe(data => {
-            this.socket.emit('refresh', {});
+            this.getAllQuiz();
         }, err => {
             this.teacherSer.errorHandler('can not publish this item');
         });
@@ -1963,17 +1951,6 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_3__["platformB
 
 module.exports = __webpack_require__(/*! E:\testForMe\tasks\QuizApp\quiz-app-client\src\main.ts */"./src/main.ts");
 
-
-/***/ }),
-
-/***/ 1:
-/*!********************!*\
-  !*** ws (ignored) ***!
-  \********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/* (ignored) */
 
 /***/ })
 

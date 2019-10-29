@@ -8,8 +8,7 @@ const { VerifyToken } = require('./src/helpers/AuthHelper')
 
 app.use(logger('dev'));
 const dbConfig = require('./src/config/db');
-const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
+const PORT = process.env.PORT || 3000
 
 app.use(cors());
 app.use(express.json());
@@ -55,7 +54,6 @@ mongoose.connect(
 );
 
 
-require('./src/sockets/streams')(io);
 const auth = require('./src/routes/authRouter');
 const quiz = require('./src/routes/quizRouter')
 app.use('/quiz-app', auth);
@@ -67,8 +65,8 @@ app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, './', 'src', 'public', 'index.html'))
 });
 
-app.set('port', 3000);
 
-server.listen(app.get('port'), () => {
-    console.log(`Server started on ${app.get('port')}`);
+
+app.listen(PORT, () => {
+    console.log(`Server started on ${PORT}`);
 });

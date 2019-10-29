@@ -788,8 +788,6 @@
             /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
             /* harmony import */ var _services_authservice_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../services/authservice.service */ "./src/app/auth/services/authservice.service.ts");
             /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-            /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
-            /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/ __webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_6__);
             var SignupComponent = /** @class */ (function () {
                 function SignupComponent(authoService, fb, router, tokenService) {
                     this.authoService = authoService;
@@ -797,7 +795,6 @@
                     this.router = router;
                     this.tokenService = tokenService;
                     this.showSpinner = false;
-                    this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_6___default()('http://localhost:3000');
                 }
                 SignupComponent.prototype.ngOnInit = function () {
                     this.init();
@@ -815,7 +812,6 @@
                     this.authoService.registerUser(this.signupForm.value).subscribe(function (data) {
                         // console.log(data);
                         _this.tokenService.SetToken(data['token']);
-                        _this.socket.emit('refresh', {});
                         // console.log(data)
                         _this.signupForm.reset();
                         setTimeout(function () {
@@ -1087,8 +1083,6 @@
             /* harmony import */ var _services_teacher_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../services/teacher.service */ "./src/app/teacher/services/teacher.service.ts");
             /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
             /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-            /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
-            /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/ __webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_5__);
             var AllQuizeComponent = /** @class */ (function () {
                 function AllQuizeComponent(router, route, teacherSer, tokenServ) {
                     this.router = router;
@@ -1097,14 +1091,9 @@
                     this.tokenServ = tokenServ;
                     this.displayedColumns = ['id', 'action'];
                     this.dataSource = [];
-                    this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_5___default()('http://localhost:3000');
                 }
                 AllQuizeComponent.prototype.ngOnInit = function () {
-                    var _this = this;
                     this.getAllQuiz();
-                    this.socket.on('refreshPage', function () {
-                        _this.getAllQuiz();
-                    });
                 };
                 AllQuizeComponent.prototype.getAllQuiz = function () {
                     var _this = this;
@@ -1137,7 +1126,7 @@
                 AllQuizeComponent.prototype.publish = function (id) {
                     var _this = this;
                     this.teacherSer.publishQuiz(id).subscribe(function (data) {
-                        _this.socket.emit('refresh', {});
+                        _this.getAllQuiz();
                     }, function (err) {
                         _this.teacherSer.errorHandler('can not publish this item');
                     });
@@ -1809,15 +1798,6 @@
         /*! no static exports found */
         /***/ (function (module, exports, __webpack_require__) {
             module.exports = __webpack_require__(/*! E:\testForMe\tasks\QuizApp\quiz-app-client\src\main.ts */ "./src/main.ts");
-            /***/ 
-        }),
-        /***/ 1: 
-        /*!********************!*\
-          !*** ws (ignored) ***!
-          \********************/
-        /*! no static exports found */
-        /***/ (function (module, exports) {
-            /* (ignored) */
             /***/ 
         })
     }, [[0, "runtime", "vendor"]]]);

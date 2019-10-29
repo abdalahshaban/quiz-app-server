@@ -326,7 +326,7 @@
             }
             /***/ 
         }),
-        /***/ 4: 
+        /***/ 3: 
         /*!********************************************************************************************************************************************************!*\
           !*** multi ./node_modules/@angular/material/prebuilt-themes/indigo-pink.css ./node_modules/materialize-css/dist/css/materialize.css ./src/styles.scss ***!
           \********************************************************************************************************************************************************/
@@ -337,7 +337,7 @@
             module.exports = __webpack_require__(/*! E:\testForMe\tasks\QuizApp\quiz-app-client\src\styles.scss */ "./src/styles.scss");
             /***/ 
         })
-    }, [[4, "runtime"]]]);
+    }, [[3, "runtime"]]]);
 //# sourceMappingURL=styles-es2015.js.map
 //# sourceMappingURL=styles-es5.js.map
 //# sourceMappingURL=styles-es5.js.map

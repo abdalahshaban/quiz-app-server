@@ -13189,7 +13189,7 @@
              */
             /***/ 
         }),
-        /***/ 2: 
+        /***/ 1: 
         /*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
           !*** multi ./node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/es5-polyfills.js zone.js/dist/zone-legacy ./node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/jit-polyfills.js ./node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/es5-jit-polyfills.js ./src/polyfills.ts ***!
           \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
@@ -13202,7 +13202,7 @@
             module.exports = __webpack_require__(/*! E:\testForMe\tasks\QuizApp\quiz-app-client\src\polyfills.ts */ "./src/polyfills.ts");
             /***/ 
         })
-    }, [[2, "runtime"]]]);
+    }, [[1, "runtime"]]]);
 //# sourceMappingURL=polyfills-es5-es2015.js.map
 //# sourceMappingURL=polyfills-es5.js.map
 //# sourceMappingURL=polyfills-es5.js.map
