@@ -72,7 +72,7 @@
         /***/ (function (module, __webpack_exports__, __webpack_require__) {
             "use strict";
             __webpack_require__.r(__webpack_exports__);
-            /* harmony default export */ __webpack_exports__["default"] = ("<div *ngIf=\"dataSource\" class=\"table-container mat-elevation-z8\">\n    <mat-table #table [dataSource]=\"dataSource\">\n        <ng-container matColumnDef=\"id\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> id </mat-header-cell>\n            <mat-cell *matCellDef=\"let quiz\"> {{quiz._id}} </mat-cell>\n        </ng-container>\n        <ng-container matColumnDef=\"action\">\n            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>\n\n            <mat-cell *matCellDef=\"let quiz\">\n                <a (click)=\"editBtn(quiz._id)\" class=\" btn-small blue waves-effect waves-light btn \">Edit</a>\n                <a (click)=\"deleteBtn(quiz._id)\" class=\" btn-small red waves-effect waves-light btn\">Delete</a>\n                <a (click)=\"publish(quiz._id)\" class=\" btn-small teal  waves-effect waves-light btn\">Publish</a>\n            </mat-cell>\n        </ng-container>\n\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\"></mat-row>\n    </mat-table>\n</div>\n\n<div id=\"wrapper\" class=\"row\" *ngIf=\"!dataSource\">\n    <h3>No Quiz Found</h3>\n</div>");
+            /* harmony default export */ __webpack_exports__["default"] = ("<div *ngIf=\"dataSource\" class=\"table-container mat-elevation-z8\">\n    <mat-table #table [dataSource]=\"dataSource\">\n        <ng-container matColumnDef=\"id\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> id </mat-header-cell>\n            <mat-cell *matCellDef=\"let quiz\"> {{quiz._id}} </mat-cell>\n        </ng-container>\n        <ng-container matColumnDef=\"action\">\n            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>\n\n            <mat-cell *matCellDef=\"let quiz\">\n                <a (click)=\"addAnthor(quiz._id)\" class=\" btn-small blue waves-effect waves-light btn \">Add Question</a>\n                <a (click)=\"editBtn(quiz._id)\" class=\" btn-small blue waves-effect waves-light btn \">Edit</a>\n                <a (click)=\"deleteBtn(quiz._id)\" class=\" btn-small red waves-effect waves-light btn\">Delete</a>\n                <a (click)=\"publish(quiz._id)\" class=\" btn-small teal  waves-effect waves-light btn\">Publish</a>\n            </mat-cell>\n        </ng-container>\n\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\"></mat-row>\n    </mat-table>\n</div>\n\n<div id=\"wrapper\" class=\"row\" *ngIf=\"!dataSource\">\n    <h3>No Quiz Found</h3>\n</div>");
             /***/ 
         }),
         /***/ "./node_modules/raw-loader/dist/cjs.js!./src/app/teacher/components/edit-form/edit-form.component.html": 
@@ -1112,7 +1112,10 @@
                     });
                 };
                 AllQuizeComponent.prototype.editBtn = function (id) {
-                    this.router.navigate([id], { relativeTo: this.route });
+                    this.router.navigate(['edit', id], { relativeTo: this.route });
+                };
+                AllQuizeComponent.prototype.addAnthor = function (id) {
+                    this.router.navigate(['new', id], { relativeTo: this.route });
                 };
                 AllQuizeComponent.prototype.deleteBtn = function (id) {
                     var _this = this;
@@ -1254,7 +1257,7 @@
                     });
                 };
                 EditFormComponent.prototype.backBtn = function () {
-                    this.router.navigate(['../'], { relativeTo: this.route });
+                    this.router.navigate(['../../'], { relativeTo: this.route });
                 };
                 return EditFormComponent;
             }());
@@ -1442,6 +1445,7 @@
                     this.questions = new Array();
                 }
                 QuizFormComponent.prototype.ngOnInit = function () {
+                    this.setQuizToForm();
                     this.init();
                 };
                 QuizFormComponent.prototype.init = function () {
@@ -1457,19 +1461,35 @@
                 };
                 QuizFormComponent.prototype.saveForm = function () {
                     var _this = this;
-                    //create Quiz
-                    var check = this.teacherServ.checkIfCorrectAnswerInPossible(this.quizForm.value);
-                    if (check) {
-                        this.questions = this.questions.concat([this.quizForm.value]);
-                        this.teacherServ.createQuiz(this.questions).subscribe(function (data) {
-                            _this.router.navigate(['../'], { relativeTo: _this.route });
-                            _this.teacherServ.successHandle('Quiz Created');
-                        }, function (err) {
-                            return _this.errorHandler('can not save this quiz');
-                        });
+                    //add anthor question to quiz
+                    if (this.addAnthor) {
+                        var check = this.teacherServ.checkIfCorrectAnswerInPossible(this.quizForm.value);
+                        if (check) {
+                            this.questions = this.questions.concat([this.quizForm.value]);
+                            this.teacherServ.addAnthorQuestionToQuiz(this.questions, this.id).subscribe(function (data) {
+                                _this.router.navigate(['teacher']);
+                                _this.teacherServ.successHandle('Question Added');
+                            });
+                        }
+                        else {
+                            return this.errorHandler('Correct Answer must in Possible Answer');
+                        }
                     }
                     else {
-                        return this.errorHandler('Correct Answer must in Possible Answer');
+                        //create Quiz
+                        var check = this.teacherServ.checkIfCorrectAnswerInPossible(this.quizForm.value);
+                        if (check) {
+                            this.questions = this.questions.concat([this.quizForm.value]);
+                            this.teacherServ.createQuiz(this.questions).subscribe(function (data) {
+                                _this.router.navigate(['teacher']);
+                                _this.teacherServ.successHandle('Quiz Created');
+                            }, function (err) {
+                                return _this.errorHandler('can not save this quiz');
+                            });
+                        }
+                        else {
+                            return this.errorHandler('Correct Answer must in Possible Answer');
+                        }
                     }
                 };
                 QuizFormComponent.prototype.anthorQuestion = function () {
@@ -1483,11 +1503,23 @@
                     }
                 };
                 QuizFormComponent.prototype.backBtn = function () {
-                    this.router.navigate(['../'], { relativeTo: this.route });
+                    this.router.navigate(['../../'], { relativeTo: this.route });
                 };
                 QuizFormComponent.prototype.errorHandler = function (message) {
                     this.snackBar.open(message, 'Error', {
                         duration: 2000
+                    });
+                };
+                QuizFormComponent.prototype.setQuizToForm = function () {
+                    var _this = this;
+                    this.route.params.subscribe(function (params) {
+                        _this.id = params['id'];
+                        if (!_this.id) {
+                            return;
+                        }
+                        else {
+                            _this.addAnthor = true;
+                        }
                     });
                 };
                 return QuizFormComponent;
@@ -1541,11 +1573,11 @@
                 ToolbarComponent.prototype.ngOnInit = function () {
                     var token = this.tokenService.GetToken();
                     if (!token) {
-                        this.router.navigate(['']);
+                        this.router.navigate(['/']);
                     }
                 };
                 ToolbarComponent.prototype.saveBtn = function () {
-                    this.router.navigate(['new'], { relativeTo: this.route });
+                    this.router.navigate(['new', 'quiz'], { relativeTo: this.route });
                 };
                 ToolbarComponent.prototype.logout = function () {
                     this.tokenService.DeleteToken();
@@ -1639,6 +1671,9 @@
                 TeacherService.prototype.getPublishQuiz = function () {
                     return this.http.get(BASE_URL + "/get-publish");
                 };
+                TeacherService.prototype.addAnthorQuestionToQuiz = function (body, id) {
+                    return this.http.post(BASE_URL + "/add-question/" + id, body);
+                };
                 return TeacherService;
             }());
             TeacherService.ctorParameters = function () { return [
@@ -1677,13 +1712,18 @@
                     canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
                 },
                 {
-                    path: 'new',
+                    path: 'new/quiz',
                     component: _components_quiz_form_quiz_form_component__WEBPACK_IMPORTED_MODULE_3__["QuizFormComponent"],
                     canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
                 },
                 {
-                    path: ':id',
+                    path: 'edit/:id',
                     component: _components_edit_form_edit_form_component__WEBPACK_IMPORTED_MODULE_1__["EditFormComponent"],
+                    canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
+                },
+                {
+                    path: 'new/:id',
+                    component: _components_quiz_form_quiz_form_component__WEBPACK_IMPORTED_MODULE_3__["QuizFormComponent"],
                     canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
                 }
             ];

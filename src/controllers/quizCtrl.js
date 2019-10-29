@@ -84,7 +84,6 @@ quizCtrl.allQuiz = async (req, res) => {
         })
 }
 
-
 quizCtrl.deleteQuize = async (req, res) => {
     const { id } = req.body
 
@@ -213,6 +212,62 @@ quizCtrl.getPublished = async (req, res) => {
         }).catch(err => {
             return res.status(HttpStatues.BAD_REQUEST).json({ message: err });
         })
+}
+
+quizCtrl.addQuestions = async (req, res) => {
+    const { id } = req.params
+    const schema = Joi.array().items(Joi.object().keys({
+        question: Joi.string().required(),
+        possibleAnswer1: Joi.string().required(),
+        possibleAnswer2: Joi.string().required(),
+        possibleAnswer3: Joi.string().required(),
+        possibleAnswer4: Joi.string().required(),
+        correctAnswer: Joi.string().required(),
+        explanation: Joi.string().required()
+    }))
+
+    const { error, value } = Joi.validate(req.body, schema);
+    if (error && error.details) {
+        return res.status(HttpStatues.BAD_REQUEST).json({ msg: error.details });
+    }
+
+    // console.log(value, 'value');
+    console.log(id);
+    const addQuestion = async () => {
+        //update quiz with questions
+        for (let i = 0; i < value.length; i++) {
+            let questionBody = {
+                question: value[i]['question'],
+                possibleAnswer1: value[i]['possibleAnswer1'],
+                possibleAnswer2: value[i]['possibleAnswer2'],
+                possibleAnswer3: value[i]['possibleAnswer3'],
+                possibleAnswer4: value[i]['possibleAnswer4'],
+                correctAnswer: value[i]['correctAnswer'],
+                explanation: value[i]['explanation'],
+                quizId: id
+            }
+            await questionModel.create(questionBody).then(async question => {
+                //update quize with questions
+                await QuizModel.updateOne({ _id: id }, {
+                    $push: {
+                        questions: {
+                            questionId: question._id
+                        }
+                    }
+                })
+            })
+        }
+    }
+
+
+    addQuestion()
+        .then(() => {
+            return res.status(HttpStatues.OK).json({ message: 'added to quiz' });
+        })
+        .catch(err => {
+            return res.status(HttpStatues.INTERNAL_SERVER_ERROR).json({ message: 'Error Occured' });
+        })
+
 }
 
 

@@ -84,7 +84,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div *ngIf=\"dataSource\" class=\"table-container mat-elevation-z8\">\n    <mat-table #table [dataSource]=\"dataSource\">\n        <ng-container matColumnDef=\"id\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> id </mat-header-cell>\n            <mat-cell *matCellDef=\"let quiz\"> {{quiz._id}} </mat-cell>\n        </ng-container>\n        <ng-container matColumnDef=\"action\">\n            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>\n\n            <mat-cell *matCellDef=\"let quiz\">\n                <a (click)=\"editBtn(quiz._id)\" class=\" btn-small blue waves-effect waves-light btn \">Edit</a>\n                <a (click)=\"deleteBtn(quiz._id)\" class=\" btn-small red waves-effect waves-light btn\">Delete</a>\n                <a (click)=\"publish(quiz._id)\" class=\" btn-small teal  waves-effect waves-light btn\">Publish</a>\n            </mat-cell>\n        </ng-container>\n\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\"></mat-row>\n    </mat-table>\n</div>\n\n<div id=\"wrapper\" class=\"row\" *ngIf=\"!dataSource\">\n    <h3>No Quiz Found</h3>\n</div>");
+/* harmony default export */ __webpack_exports__["default"] = ("<div *ngIf=\"dataSource\" class=\"table-container mat-elevation-z8\">\n    <mat-table #table [dataSource]=\"dataSource\">\n        <ng-container matColumnDef=\"id\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> id </mat-header-cell>\n            <mat-cell *matCellDef=\"let quiz\"> {{quiz._id}} </mat-cell>\n        </ng-container>\n        <ng-container matColumnDef=\"action\">\n            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>\n\n            <mat-cell *matCellDef=\"let quiz\">\n                <a (click)=\"addAnthor(quiz._id)\" class=\" btn-small blue waves-effect waves-light btn \">Add Question</a>\n                <a (click)=\"editBtn(quiz._id)\" class=\" btn-small blue waves-effect waves-light btn \">Edit</a>\n                <a (click)=\"deleteBtn(quiz._id)\" class=\" btn-small red waves-effect waves-light btn\">Delete</a>\n                <a (click)=\"publish(quiz._id)\" class=\" btn-small teal  waves-effect waves-light btn\">Publish</a>\n            </mat-cell>\n        </ng-container>\n\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\"></mat-row>\n    </mat-table>\n</div>\n\n<div id=\"wrapper\" class=\"row\" *ngIf=\"!dataSource\">\n    <h3>No Quiz Found</h3>\n</div>");
 
 /***/ }),
 
@@ -1180,7 +1180,10 @@ let AllQuizeComponent = class AllQuizeComponent {
         });
     }
     editBtn(id) {
-        this.router.navigate([id], { relativeTo: this.route });
+        this.router.navigate(['edit', id], { relativeTo: this.route });
+    }
+    addAnthor(id) {
+        this.router.navigate(['new', id], { relativeTo: this.route });
     }
     deleteBtn(id) {
         this.teacherSer.deleteQuiz(id).subscribe(data => {
@@ -1327,7 +1330,7 @@ let EditFormComponent = class EditFormComponent {
         });
     }
     backBtn() {
-        this.router.navigate(['../'], { relativeTo: this.route });
+        this.router.navigate(['../../'], { relativeTo: this.route });
     }
 };
 EditFormComponent.ctorParameters = () => [
@@ -1541,6 +1544,7 @@ let QuizFormComponent = class QuizFormComponent {
         this.questions = new Array();
     }
     ngOnInit() {
+        this.setQuizToForm();
         this.init();
     }
     init() {
@@ -1555,19 +1559,35 @@ let QuizFormComponent = class QuizFormComponent {
         });
     }
     saveForm() {
-        //create Quiz
-        let check = this.teacherServ.checkIfCorrectAnswerInPossible(this.quizForm.value);
-        if (check) {
-            this.questions = [...this.questions, this.quizForm.value];
-            this.teacherServ.createQuiz(this.questions).subscribe(data => {
-                this.router.navigate(['../'], { relativeTo: this.route });
-                this.teacherServ.successHandle('Quiz Created');
-            }, err => {
-                return this.errorHandler('can not save this quiz');
-            });
+        //add anthor question to quiz
+        if (this.addAnthor) {
+            let check = this.teacherServ.checkIfCorrectAnswerInPossible(this.quizForm.value);
+            if (check) {
+                this.questions = [...this.questions, this.quizForm.value];
+                this.teacherServ.addAnthorQuestionToQuiz(this.questions, this.id).subscribe(data => {
+                    this.router.navigate(['teacher']);
+                    this.teacherServ.successHandle('Question Added');
+                });
+            }
+            else {
+                return this.errorHandler('Correct Answer must in Possible Answer');
+            }
         }
         else {
-            return this.errorHandler('Correct Answer must in Possible Answer');
+            //create Quiz
+            let check = this.teacherServ.checkIfCorrectAnswerInPossible(this.quizForm.value);
+            if (check) {
+                this.questions = [...this.questions, this.quizForm.value];
+                this.teacherServ.createQuiz(this.questions).subscribe(data => {
+                    this.router.navigate(['teacher']);
+                    this.teacherServ.successHandle('Quiz Created');
+                }, err => {
+                    return this.errorHandler('can not save this quiz');
+                });
+            }
+            else {
+                return this.errorHandler('Correct Answer must in Possible Answer');
+            }
         }
     }
     anthorQuestion() {
@@ -1581,11 +1601,22 @@ let QuizFormComponent = class QuizFormComponent {
         }
     }
     backBtn() {
-        this.router.navigate(['../'], { relativeTo: this.route });
+        this.router.navigate(['../../'], { relativeTo: this.route });
     }
     errorHandler(message) {
         this.snackBar.open(message, 'Error', {
             duration: 2000
+        });
+    }
+    setQuizToForm() {
+        this.route.params.subscribe(params => {
+            this.id = params['id'];
+            if (!this.id) {
+                return;
+            }
+            else {
+                this.addAnthor = true;
+            }
         });
     }
 };
@@ -1648,11 +1679,11 @@ let ToolbarComponent = class ToolbarComponent {
     ngOnInit() {
         const token = this.tokenService.GetToken();
         if (!token) {
-            this.router.navigate(['']);
+            this.router.navigate(['/']);
         }
     }
     saveBtn() {
-        this.router.navigate(['new'], { relativeTo: this.route });
+        this.router.navigate(['new', 'quiz'], { relativeTo: this.route });
     }
     logout() {
         this.tokenService.DeleteToken();
@@ -1753,6 +1784,9 @@ let TeacherService = class TeacherService {
     getPublishQuiz() {
         return this.http.get(`${BASE_URL}/get-publish`);
     }
+    addAnthorQuestionToQuiz(body, id) {
+        return this.http.post(`${BASE_URL}/add-question/${id}`, body);
+    }
 };
 TeacherService.ctorParameters = () => [
     { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClient"] },
@@ -1801,13 +1835,18 @@ const routes = [
         canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
     },
     {
-        path: 'new',
+        path: 'new/quiz',
         component: _components_quiz_form_quiz_form_component__WEBPACK_IMPORTED_MODULE_3__["QuizFormComponent"],
         canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
     },
     {
-        path: ':id',
+        path: 'edit/:id',
         component: _components_edit_form_edit_form_component__WEBPACK_IMPORTED_MODULE_1__["EditFormComponent"],
+        canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
+    },
+    {
+        path: 'new/:id',
+        component: _components_quiz_form_quiz_form_component__WEBPACK_IMPORTED_MODULE_3__["QuizFormComponent"],
         canActivate: [_auth_services_user_guard__WEBPACK_IMPORTED_MODULE_2__["UserGuard"]]
     }
 ];

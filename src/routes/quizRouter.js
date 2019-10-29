@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {
-    addQuiz, allQuiz, deleteQuize, getQuizById, updateQuestion, deleteQuestion, publishQuiz, getPublished
+    addQuiz, allQuiz, deleteQuize, getQuizById, updateQuestion, deleteQuestion, publishQuiz, getPublished,
+    addQuestions
 } = require('../controllers/quizCtrl');
 
 router.post('/add-quiz', addQuiz);
@@ -11,6 +12,7 @@ router.post('/get-quiz', getQuizById)
 router.put('/publish-quiz', publishQuiz)
 router.get('/get-publish', getPublished)
 router.put('/update-question', updateQuestion)
+router.post('/add-question/:id', addQuestions)
 router.delete('/delete-question/:id', deleteQuestion)
 
 
